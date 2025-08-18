@@ -1,0 +1,95 @@
+# Python cache and bytecode
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+*.pyc
+*$py.class
+
+# Virtual environment
+venv/
+.env/
+.venv/
+env/
+ENV/
+
+# IDE/editor settings
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Logs and temp files
+*.log
+*.pot
+*.mo
+*.pid
+*.seed
+*.out
+*.bak
+*.tmp
+*.swp
+
+# FastAPI/uvicorn related
+*.db
+*.sqlite3
+instance/
+*.sock
+
+# Coverage / Testing
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+*.py,cover
+.cache
+.pytest_cache/
+nosetests.xml
+*.spec
+
+# MyPy / Pyre / Pylint
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+.pylint.d/
+
+# Build / Packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+MANIFEST
+*.manifest
+*.spec
+
+# Environment variables / Secrets
+.env
+.env.*
+*.secret
+secrets.json
+
+# Jupyter / Notebooks
+.ipynb_checkpoints
+*.ipynb
+
+# SQLite databases (FastAPI example)
+*.sqlite
+*.sqlite3
+
+# Docker
+*.pid
+*.pid.lock
+*.tar
+*.log
+docker-compose.override.yml
+
+# Others
+*.DS_Store
