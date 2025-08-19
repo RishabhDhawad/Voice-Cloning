@@ -1,19 +1,56 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Live Transcription</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Transcribe Audio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
   </head>
   <body>
-    <h1>Transcribe Audio With FastAPI</h1>
-    <p id="status">Connection status will go here</p>
-    <p id="transcript"></p>
+    <div class="container">
+      <header>
+        <div>
+          <div class="title">Transcribe Audio</div>
+          <div class="subtitle">Upload an audio file, get a transcript and its mel spectrogram.</div>
+        </div>
+        <div class="badge dot" id="statusBadge">Ready</div>
+      </header>
+
+      <div class="grid">
+        <section class="panel">
+          <div class="section-title">Input</div>
+          <div class="control-row">
+            <label class="file-input">
+              <input type="file" id="audioFile" accept="audio/*" />
+            </label>
+            <button class="btn" id="sendBtn">Transcribe</button>
+          </div>
+          <div class="status" id="status"></div>
+        </section>
+
+        <section class="panel">
+          <div class="section-title">Transcript</div>
+          <div id="transcript" class="transcript"></div>
+        </section>
+      </div>
+
+      <section class="panel" style="margin-top:16px;">
+        <div class="section-title">Mel Spectrogram</div>
+        <div class="spectrogram">
+          <img id="mel" alt="Mel Spectrogram" style="display:none;">
+        </div>
+      </section>
+
+      <footer>
+        <p>
+          Made with Love by <strong>Rishabh Dhawad</strong>
+        </p>
+      </footer>
+    </div>
   </body>
 
-  <script>
-    navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-      const mediaRecorder = new MediaRecorder(stream);
-    });
-
-    const socket = new WebSocket('ws://localhost:8000/listen')
-  </script>
+  <script src="/static/app.js" defer></script>
 </html>

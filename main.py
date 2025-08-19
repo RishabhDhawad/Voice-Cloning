@@ -2,22 +2,29 @@ import whisper
 import os
 import tempfile
 import numpy as np
-import matplotlib
+import matplotlib.pyplot as plt
+import librosa
+import librosa.display
+import base64
+from io import BytesIO
 from fastapi import FastAPI, File, UploadFile
-from fastapi.responses import JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
 
 try:
     model = whisper.load_model("tiny")
-    print("Whisper model loaded succesfully")
+    print("Whisper model loaded successfully")
 except Exception as e:
     print(f"Error loading whisper model: {e}")
     model = None
 
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 @app.get("/")
 def read_root():
-    return {"message": "Whisper API is ready to transcribe audio!"}
+    return HTMLResponse(content=open("static/index.html", "r").read())
 
 @app.post("/transcribe")
 async def transcribe_audio(file: UploadFile = File(...)):
@@ -33,9 +40,29 @@ async def transcribe_audio(file: UploadFile = File(...)):
             
         print(f"Transcribing File: {temp_file_path}")
         
-        result = model.transcribe(temp_file_path, fp16=False) 
+        audio, sr = librosa.load(temp_file_path)
         
-        return {"transcription": result["text"]}
+        mel_spec = librosa.feature.melspectrogram(y=audio, sr=sr)
+        mel_spec_db = librosa.power_to_db(mel_spec, ref=np.max)
+        
+        plt.figure(figsize=(10, 4))
+        librosa.display.specshow(mel_spec_db, sr=sr, x_axis="time", y_axis="mel")
+        plt.colorbar(label="dB")
+        plt.title('Mel Spectrogram')
+        
+        buffer = BytesIO()
+        plt.savefig(buffer, format="png", bbox_inches="tight")
+        buffer.seek(0)
+        img_b64 = base64.b64encode(buffer.read()).decode()
+        mel_plot = f"data:image/png;base64,{img_b64}"
+        plt.close()
+        
+        result = model.transcribe(temp_file_path, fp16=False)
+        
+        return {
+            "transcription": result["text"],
+            "mel_spectrogram": mel_plot
+        }
     
     except Exception as e:
         return JSONResponse(content={"error": f"An error occurred during transcription: {str(e)}"}, status_code=500)
@@ -43,5 +70,4 @@ async def transcribe_audio(file: UploadFile = File(...)):
     finally:
         if temp_file_path and os.path.exists(temp_file_path):
             os.remove(temp_file_path)
-            print(f"Cleaned up temperory file: {temp_file_path}")
-            
+            print(f"Cleaned up temporary file: {temp_file_path}")
