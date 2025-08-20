@@ -4,17 +4,22 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Transcribe Audio</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/style.css" />
   </head>
   <body>
     <div class="container">
       <header>
         <div>
           <div class="title">Transcribe Audio</div>
-          <div class="subtitle">Upload an audio file, get a transcript and its mel spectrogram.</div>
+          <div class="subtitle">
+            Upload an audio file, get a transcript and its mel spectrogram.
+          </div>
         </div>
         <div class="badge dot" id="statusBadge">Ready</div>
       </header>
@@ -28,6 +33,7 @@
             </label>
             <button class="btn" id="sendBtn">Transcribe</button>
           </div>
+          <br>
           <div class="status" id="status"></div>
         </section>
 
@@ -37,17 +43,15 @@
         </section>
       </div>
 
-      <section class="panel" style="margin-top:16px;">
+      <section class="panel" style="margin-top: 16px">
         <div class="section-title">Mel Spectrogram</div>
         <div class="spectrogram">
-          <img id="mel" alt="Mel Spectrogram" style="display:none;">
+          <img id="mel" alt="Mel Spectrogram" style="display: none" />
         </div>
       </section>
 
       <footer>
-        <p>
-          Made with Love by <strong>Rishabh Dhawad</strong>
-        </p>
+        <p>Made with Love by <strong>Rishabh Dhawad</strong></p>
       </footer>
     </div>
   </body>

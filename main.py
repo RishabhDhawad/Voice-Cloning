@@ -11,7 +11,7 @@ from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
-app = FastAPI()
+app = FastAPI(title="Transcribe Audio",)
 
 try:
     model = whisper.load_model("tiny")
