@@ -41,3 +41,21 @@ document.getElementById("sendBtn").addEventListener("click", async () => {
     statusBadge.classList.add("error", "dot");
   }
 });
+
+const player = document.getElementById("player");
+const playPauseBtn = document.getElementById("playPauseBtn");
+const volumeSlider = document.getElementById("volumeSlider");
+
+playPauseBtn.addEventListener("click", () => {
+  if (player.paused) {
+    player.play();
+    playPauseBtn.textContent = "Pause";
+  } else {
+    player.pause();
+    playPauseBtn.textContent = "Play";
+  }
+});
+
+volumeSlider.addEventListener("input", () => {
+  player.volume = volumeSlider.value;
+});
