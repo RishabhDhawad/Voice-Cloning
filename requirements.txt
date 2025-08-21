@@ -2,3 +2,8 @@ fastapi
 uvicorn
 pyttsx3
 pydantic
+numpy
+matplotlib
+librosa
+openai-whisper
+python-multipart

@@ -40,8 +40,11 @@ async def transcribe_audio(file: UploadFile = File(...)):
             
         print(f"Transcribing File: {temp_file_path}")
         
-        audio, sr = librosa.load(temp_file_path)
-        
+        # Robustly load audio using Whisper's loader (handles webm/ogg via ffmpeg)
+        audio = whisper.load_audio(temp_file_path)
+        sr = 16000  # whisper.load_audio returns 16kHz mono float32
+
+        # Build mel spectrogram for display
         mel_spec = librosa.feature.melspectrogram(y=audio, sr=sr)
         mel_spec_db = librosa.power_to_db(mel_spec, ref=np.max)
         
@@ -57,7 +60,8 @@ async def transcribe_audio(file: UploadFile = File(...)):
         mel_plot = f"data:image/png;base64,{img_b64}"
         plt.close()
         
-        result = model.transcribe(temp_file_path, fp16=False)
+        # Transcribe directly from the loaded audio array
+        result = model.transcribe(audio=audio, fp16=False)
         
         return {
             "transcription": result["text"],
