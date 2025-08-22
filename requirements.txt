@@ -7,3 +7,4 @@ matplotlib
 librosa
 openai-whisper
 python-multipart
+gunicorn
