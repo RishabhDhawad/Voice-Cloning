@@ -130,23 +130,6 @@ footer {
   text-align: center;
 }
 
-.custom-controls {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-#playPauseBtn {
-  padding: 5px 10px;
-  font-size: 12px;
-  border: none;
-  border-radius: 8px;
-  font-weight: bold;
-  color: #fff;
-  background-color: #007bff;
-  cursor: pointer;
-}
-
 #player {
   transform: scale(0.85);
   transform-origin: left;

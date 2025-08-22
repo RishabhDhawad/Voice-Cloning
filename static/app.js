@@ -8,62 +8,22 @@ const elements = {
   player: document.getElementById("player"),
   transcribeRecordingBtn: document.getElementById("transcribeRecordingBtn"),
   statusDisplay: document.getElementById("status"),
-  statusBadge: document.getElementById("statusBadge"),
   transcriptDiv: document.getElementById("transcript"),
   melImg: document.getElementById("mel"),
 };
 
-// --- Store recording data ---
 let mediaRecorder;
 let audioChunks = [];
 let recordedAudioBlob = null;
 
-function updateUI(state, message = "") {
-  elements.uploadBtn.disabled = false;
-  elements.startBtn.disabled = false;
+async function sendForTranscription(formData) {
+  elements.statusDisplay.textContent = "Uploading and transcribing...";
+  elements.uploadBtn.disabled = true;
+  elements.startBtn.disabled = true;
   elements.stopBtn.disabled = true;
   elements.transcribeRecordingBtn.disabled = true;
-
-  switch (state) {
-    case "IDLE":
-      elements.statusBadge.textContent = "Ready";
-      elements.statusDisplay.textContent = "Select a file or start recording.";
-      break;
-    case "RECORDING":
-      elements.startBtn.disabled = true;
-      elements.stopBtn.disabled = false;
-      elements.statusBadge.textContent = "Working";
-      elements.statusDisplay.textContent = "Recording...";
-      break;
-    case "PROCESSING":
-      elements.uploadBtn.disabled = true;
-      elements.startBtn.disabled = true;
-      elements.statusBadge.textContent = "Working";
-      elements.statusDisplay.textContent = "Uploading and transcribing...";
-      elements.transcriptDiv.textContent = "";
-      elements.melImg.style.display = "none";
-      break;
-    case "RECORDING_READY":
-      elements.transcribeRecordingBtn.disabled = false; // The only button that should be enabled
-      elements.statusBadge.textContent = "Ready";
-      elements.statusDisplay.textContent =
-        "Recording is ready to be transcribed.";
-      break;
-    case "DONE":
-      elements.statusBadge.textContent = "Ready";
-      elements.statusDisplay.textContent = "Done.";
-      if (recordedAudioBlob) elements.transcribeRecordingBtn.disabled = false;
-      break;
-    case "ERROR":
-      elements.statusBadge.textContent = "Error";
-      elements.statusDisplay.textContent = `Error: ${message}`;
-      if (recordedAudioBlob) elements.transcribeRecordingBtn.disabled = false;
-      break;
-  }
-}
-
-async function sendForTranscription(formData) {
-  updateUI("PROCESSING");
+  elements.transcriptDiv.textContent = "";
+  elements.melImg.style.display = "none";
   try {
     const response = await fetch("/transcribe", {
       method: "POST",
@@ -79,14 +39,18 @@ async function sendForTranscription(formData) {
       data.transcription || "[No transcription found]";
     elements.melImg.src = data.mel_spectrogram;
     elements.melImg.style.display = "block";
-    updateUI("DONE");
+    elements.statusDisplay.textContent = "Done.";
+
+    elements.uploadBtn.disabled = false;
+    elements.startBtn.disabled = false;
+    if (recordedAudioBlob) elements.transcribeRecordingBtn.disabled = false;
   } catch (err) {
     console.error("Transcription Error:", err);
-    updateUI("ERROR", err.message);
+    elements.statusDisplay.textContent = `Error: ${err.message}`;
+    if (recordedAudioBlob) elements.transcribeRecordingBtn.disabled = false;
   }
 }
 // --- Main Setup ---
-
 // 1. Handle File Upload
 elements.uploadBtn.addEventListener("click", () => {
   if (!elements.fileInput.files.length) {
@@ -111,17 +75,28 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       mediaRecorder.onstop = () => {
         recordedAudioBlob = new Blob(audioChunks, { type: "audio/webm" });
         elements.player.src = URL.createObjectURL(recordedAudioBlob);
-        updateUI("RECORDING_READY");
+        elements.transcribeRecordingBtn.disabled = false;
+        elements.statusDisplay.textContent = "Recording ready.";
+        // stop tracks to release mic
+        stream.getTracks().forEach((t) => t.stop());
       };
 
       mediaRecorder.start();
-      updateUI("RECORDING");
+      elements.startBtn.disabled = true;
+      elements.stopBtn.disabled = false;
+      elements.statusDisplay.textContent = "Recording...";
     } catch (err) {
-      updateUI("ERROR", "Could not access microphone.");
+      elements.statusDisplay.textContent = "Error: Could not access microphone.";
     }
   });
 
-  elements.stopBtn.addEventListener("click", () => mediaRecorder.stop());
+  elements.stopBtn.addEventListener("click", () => {
+    if (mediaRecorder && mediaRecorder.state !== "inactive") {
+      mediaRecorder.stop();
+    }
+    elements.stopBtn.disabled = true;
+    elements.startBtn.disabled = false;
+  });
 
   elements.transcribeRecordingBtn.addEventListener("click", () => {
     const formData = new FormData();
@@ -130,9 +105,11 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
   });
 } else {
   // If the browser doesn't support recording, disable the feature
-  updateUI("ERROR", "Live recording is not supported on your browser.");
+  elements.statusDisplay.textContent = "Live recording is not supported on your browser.";
   elements.startBtn.disabled = true;
 }
 
 // Set the initial state of the page on load
-updateUI("IDLE");
+elements.stopBtn.disabled = true;
+elements.transcribeRecordingBtn.disabled = true;
+elements.statusDisplay.textContent = "Select a file or start recording.";
