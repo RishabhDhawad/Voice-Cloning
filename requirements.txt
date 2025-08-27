@@ -8,3 +8,6 @@ librosa
 openai-whisper
 python-multipart
 gunicorn
+torch
+torchaudio
+git+https://github.com/SWivid/F5-TTS.git

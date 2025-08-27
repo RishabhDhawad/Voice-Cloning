@@ -30,15 +30,15 @@
           <div class="control-row">
             <label class="file-input">
               <input type="file" id="audioFile" accept="audio/*" />
+              <span>Choose Audio File</span>
             </label>
             <button class="btn" id="sendBtn">Transcribe</button>
           </div>
 
           <hr style="margin: 20px 0" />
           <div class="control-row">
-            <button id="start">Start Recording</button>
-            <button id="stop">Stop Recording</button>
-            <br /><br />
+            <button class="btn outline" id="start">Start Recording</button>
+            <button class="btn outline" id="stop">Stop Recording</button>
             <audio id="player" controls></audio>
             <button class="btn" id="transcribeRecordingBtn" disabled>
               Transcribe
@@ -55,15 +55,35 @@
       </div>
 
       <section class="panel" style="margin-top: 16px">
+        <div class="section-title">Voice Cloning (F5-TTS)</div>
+        <textarea
+          id="ttsText"
+          rows="3"
+          placeholder="Enter text to synthesize..."
+        ></textarea>
+        <div class="helper">
+          Provide 1 to 2 sentences for the clone to speak.
+        </div>
+        <div class="control-row" style="margin-top: 12px">
+          <label class="file-input">
+            <input type="file" id="refVoice" accept="audio/*" />
+            <span>Choose Reference Voice</span>
+          </label>
+          <button class="btn" id="speakBtn">Generate Voice</button>
+        </div>
+        <audio
+          id="ttsPlayer"
+          controls
+          style="display: none; margin-top: 12px"
+        ></audio>
+      </section>
+
+      <section class="panel" style="margin-top: 16px">
         <div class="section-title">Mel Spectrogram</div>
         <div class="spectrogram">
           <img id="mel" alt="Mel Spectrogram" style="display: none" />
         </div>
       </section>
-
-      <footer>
-        <p>Made with Love by <strong>Rishabh Dhawad</strong></p>
-      </footer>
     </div>
   </body>
 
