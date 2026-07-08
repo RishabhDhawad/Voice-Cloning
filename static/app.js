@@ -8,16 +8,42 @@ const elements = {
   player: document.getElementById("player"),
   transcribeRecordingBtn: document.getElementById("transcribeRecordingBtn"),
   statusDisplay: document.getElementById("status"),
+  statusBadge: document.getElementById("statusBadge"),
   transcriptDiv: document.getElementById("transcript"),
   melImg: document.getElementById("mel"),
+  ttsText: document.getElementById("ttsText"),
+  refVoice: document.getElementById("refVoice"),
+  speakBtn: document.getElementById("speakBtn"),
+  ttsPlayer: document.getElementById("ttsPlayer"),
+  ttsStatus: document.getElementById("ttsStatus"),
 };
 
 let mediaRecorder;
 let audioChunks = [];
 let recordedAudioBlob = null;
 
+function updateBadge(text, isError = false, isRecording = false, isProcessing = false) {
+  elements.statusBadge.textContent = text;
+  if (isError) {
+    elements.statusBadge.classList.add("error");
+  } else {
+    elements.statusBadge.classList.remove("error");
+  }
+  if (isRecording) {
+    elements.statusBadge.classList.add("recording");
+  } else {
+    elements.statusBadge.classList.remove("recording");
+  }
+  if (isProcessing) {
+    elements.statusBadge.classList.add("processing");
+  } else {
+    elements.statusBadge.classList.remove("processing");
+  }
+}
+
 async function sendForTranscription(formData) {
   elements.statusDisplay.textContent = "Uploading and transcribing...";
+  updateBadge("Transcribing...", false, false, true);
   elements.uploadBtn.disabled = true;
   elements.startBtn.disabled = true;
   elements.stopBtn.disabled = true;
@@ -40,6 +66,7 @@ async function sendForTranscription(formData) {
     elements.melImg.src = data.mel_spectrogram;
     elements.melImg.style.display = "block";
     elements.statusDisplay.textContent = "Done.";
+    updateBadge("Ready");
 
     elements.uploadBtn.disabled = false;
     elements.startBtn.disabled = false;
@@ -47,6 +74,7 @@ async function sendForTranscription(formData) {
   } catch (err) {
     console.error("Transcription Error:", err);
     elements.statusDisplay.textContent = `Error: ${err.message}`;
+    updateBadge("Error", true);
     if (recordedAudioBlob) elements.transcribeRecordingBtn.disabled = false;
   }
 }
@@ -77,6 +105,7 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         elements.player.src = URL.createObjectURL(recordedAudioBlob);
         elements.transcribeRecordingBtn.disabled = false;
         elements.statusDisplay.textContent = "Recording ready.";
+        updateBadge("Ready");
         // stop tracks to release mic
         stream.getTracks().forEach((t) => t.stop());
       };
@@ -85,8 +114,10 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       elements.startBtn.disabled = true;
       elements.stopBtn.disabled = false;
       elements.statusDisplay.textContent = "Recording...";
+      updateBadge("Recording...", false, true, false);
     } catch (err) {
       elements.statusDisplay.textContent = "Error: Could not access microphone.";
+      updateBadge("Error", true);
     }
   });
 
@@ -113,3 +144,55 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
 elements.stopBtn.disabled = true;
 elements.transcribeRecordingBtn.disabled = true;
 elements.statusDisplay.textContent = "Select a file or start recording.";
+updateBadge("Ready");
+
+// 3. Handle Voice Cloning
+elements.speakBtn.addEventListener("click", async () => {
+  const text = elements.ttsText.value.trim();
+  if (!text) {
+    alert("Please enter text to synthesize.");
+    return;
+  }
+  if (!elements.refVoice.files.length) {
+    alert("Please choose a reference voice file.");
+    return;
+  }
+
+  elements.speakBtn.disabled = true;
+  elements.speakBtn.textContent = "Generating...";
+  elements.ttsStatus.textContent = "Generating voice...";
+  elements.ttsStatus.className = "tts-status processing";
+  updateBadge("Generating...", false, false, true);
+
+  try {
+    const formData = new FormData();
+    formData.append("text", text);
+    formData.append("ref_voice", elements.refVoice.files[0]);
+
+    const response = await fetch("/clone-voice", {
+      method: "POST",
+      body: formData,
+    });
+    const data = await response.json();
+
+    if (!response.ok || data.error) {
+      throw new Error(data.error || "An unknown error occurred.");
+    }
+
+    elements.ttsPlayer.src = data.audio;
+    elements.ttsPlayer.style.display = "block";
+    elements.ttsPlayer.play();
+    elements.ttsStatus.textContent = "Voice generation complete!";
+    elements.ttsStatus.className = "tts-status success";
+    updateBadge("Ready");
+  } catch (err) {
+    console.error("Voice Cloning Error:", err);
+    alert(`Error: ${err.message}`);
+    elements.ttsStatus.textContent = `Error: ${err.message}`;
+    elements.ttsStatus.className = "tts-status error";
+    updateBadge("Error", true);
+  } finally {
+    elements.speakBtn.disabled = false;
+    elements.speakBtn.textContent = "Generate Voice";
+  }
+});

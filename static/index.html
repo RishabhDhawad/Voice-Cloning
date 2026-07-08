@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <meta charset="utf-8" />
@@ -35,7 +35,12 @@
             <button class="btn" id="sendBtn">Transcribe</button>
           </div>
 
-          <hr style="margin: 20px 0" />
+          <div style="display: flex; align-items: center; margin: 20px 0">
+            <div style="flex: 1; height: 1px; background: #ccc"></div>
+            <span style="padding: 0 12px; color: #666">OR</span>
+            <div style="flex: 1; height: 1px; background: #ccc"></div>
+          </div>
+
           <div class="control-row">
             <button class="btn outline" id="start">Start Recording</button>
             <button class="btn outline" id="stop">Stop Recording</button>
@@ -55,14 +60,22 @@
       </div>
 
       <section class="panel" style="margin-top: 16px">
-        <div class="section-title">Voice Cloning (F5-TTS)</div>
+        <div class="section-title">Mel Spectrogram</div>
+        <div class="spectrogram">
+          <img id="mel" alt="Mel Spectrogram" style="display: none" />
+        </div>
+      </section>
+
+      <section class="panel" style="margin-top: 16px">
+        <div class="section-title">Voice Cloning (Coqui TTS)</div>
         <textarea
           id="ttsText"
           rows="3"
           placeholder="Enter text to synthesize..."
         ></textarea>
         <div class="helper">
-          Provide 1 to 2 sentences for the clone to speak.
+          Provide 1 to 2 sentences for the clone to speak. Reference audio
+          should be 6+ seconds for best results.
         </div>
         <div class="control-row" style="margin-top: 12px">
           <label class="file-input">
@@ -71,18 +84,12 @@
           </label>
           <button class="btn" id="speakBtn">Generate Voice</button>
         </div>
+        <div class="tts-status" id="ttsStatus"></div>
         <audio
           id="ttsPlayer"
           controls
           style="display: none; margin-top: 12px"
         ></audio>
-      </section>
-
-      <section class="panel" style="margin-top: 16px">
-        <div class="section-title">Mel Spectrogram</div>
-        <div class="spectrogram">
-          <img id="mel" alt="Mel Spectrogram" style="display: none" />
-        </div>
       </section>
     </div>
   </body>
