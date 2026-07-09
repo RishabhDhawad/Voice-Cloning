@@ -1,148 +1,144 @@
-# 🎧 Transcribe Audio (FastAPI + Whisper)
+# 🎧 Voice Cloning & Audio Transcription Suite (FastAPI + Whisper)
 
-![Made with FastAPI](https://img.shields.io/badge/FastAPI-0.11x-009688?logo=fastapi&logoColor=white)
-![Whisper](https://img.shields.io/badge/Whisper-tiny-6E56CF)
-![Python](https://img.shields.io/badge/Python-3.9%2B-3776AB?logo=python&logoColor=white)
+A modern, responsive, and high-performance web application combining state-of-the-art speech-to-text (Whisper) and text-to-speech/voice-cloning capabilities into a single interface.
 
-Minimal, fast, and friendly web app to transcribe audio and visualize its mel spectrogram.
+<p align="center">
+  <img src="https://img.shields.io/badge/FastAPI-009688?style=plastic&logo=fastapi&logoColor=white" />
+  <img src="https://img.shields.io/badge/OpenAI%20Whisper-412991?style=plastic&logo=openai&logoColor=white" />
+  <img src="https://img.shields.io/badge/RealtimeTTS-6366F1?style=plastic&logo=python&logoColor=white" />
+  <img src="https://img.shields.io/badge/Python-3.9+-3776AB?style=plastic&logo=python&logoColor=white" />
+</p>
 
-The backend is built with FastAPI and OpenAI Whisper (tiny model by default). The frontend is plain HTML/CSS/JS for zero-friction usage.
 
-## ✨ Features
+## ✨ Features & Interface
 
-* **Upload audio** from your device.
-* **Record in browser** (Start/Stop) and transcribe with one click.
-* **One-click transcription** using Whisper.
-* **Mel spectrogram** generated with librosa + matplotlib, rendered inline as an image.
-* **Minimal JS** — most logic lives in FastAPI.
+Our suite is divided into three primary features, complete with real-time visualization and responsive UI controls.
+
+### 1. 🎙️ Voice Transcribe
+Transcribe pre-recorded audio files or capture your voice live using the in-browser high-fidelity microphone recorder. Powered by OpenAI's Whisper model, it delivers fast and accurate speech-to-text conversion.
+<p align="center">
+  <img src="images/home.png" alt="Voice Transcribe Interface" width="800" style="border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);" />
+</p>
+
+### 2. 📊 Mel Spectrogram Generation
+Analyze audio frequency components visually. The application generates a professional, high-resolution Mel Spectrogram (using logarithmic decibel scaling) right after transcription.
+<p align="center">
+  <img src="images/melspectrogram.png" alt="Mel Spectrogram Visualization" width="800" style="border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);" />
+</p>
+
+### 3. 👥 Voice Cloning & TTS Synthesis
+Synthesize custom text using any target voice reference. By uploading a brief reference audio file, the backend voice-cloning engine duplicates style, tone, and timbre to produce a synthesized audio file ready for instant playback.
+<p align="center">
+  <img src="images/voice_clone.png" alt="Voice Cloning Interface" width="800" style="border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);" />
+</p>
+
+
 
 ## 🧰 Tech Stack
 
-* **Backend:** FastAPI, Uvicorn, OpenAI Whisper, Librosa, NumPy, Matplotlib
-* **Frontend:** Vanilla HTML/CSS/JS
+- **Backend:** FastAPI, Uvicorn, OpenAI Whisper, ChatterboxTTS, RealtimeTTS, Librosa, NumPy, Matplotlib, PyTorch, torchaudio
+- **Frontend:** HTML5, CSS3 (Modern premium styling), Vanilla JavaScript (microphone recording, playback, API handling)
+
+---
 
 ## 📁 Project Structure
 
-```
+```text
 .
-├─ main.py                 # FastAPI app with / and /transcribe endpoints
-├─ requirements.txt        # All Python dependencies (FastAPI, Whisper, Librosa, etc.)
-├─ static/                 # Frontend assets
-│  ├─ index.html           # UI (Start/Stop recording, upload)
-│  ├─ style.css            # Styles
-│  └─ app.js               # Minimal client-side logic
-└─ README.md
+├── main.py                 # FastAPI application & API endpoints
+├── requirements.txt        # Backend dependencies & package list
+├── static/                 # Web assets directory
+│   ├── index.html          # Clean & interactive frontend interface
+│   ├── style.css           # Premium dark mode styling & layout
+│   └── app.js              # Client-side audio processing & API requests
+└── README.md               # Project documentation
 ```
 
-Key endpoints/functions:
-
-* `GET /` serves `static/index.html`.
-* `POST /transcribe` handled by `transcribe_audio` in `main.py`.
+---
 
 ## 🧩 Prerequisites
 
-* Python 3.9+ recommended.
-* ffmpeg installed and available on PATH (required by Whisper/librosa).
-  - Windows: `choco install ffmpeg` (Chocolatey) or download from ffmpeg.org.
-  - macOS: `brew install ffmpeg`.
-  - Linux: `sudo apt-get install ffmpeg` (Debian/Ubuntu).
+1. **Python 3.9+** is highly recommended.
+2. **ffmpeg** installed and configured in your system `PATH` (critical for audio decoding and Whisper processing):
+   - **Windows:** Run `choco install ffmpeg` or download from [ffmpeg.org](https://ffmpeg.org).
+   - **macOS:** Run `brew install ffmpeg`.
+   - **Linux:** Run `sudo apt-get install ffmpeg`.
 
-## 🚀 Setup
+---
 
-1) Create and activate a virtual environment
+## 🚀 Setup & Installation
 
+### 1. Environment Configuration
+Create and activate a Python virtual environment:
 ```bash
-python -m venv .venv
-.venv\Scripts\activate   # Windows
-# source .venv/bin/activate  # macOS/Linux
+python -m venv venv
+# On Windows:
+.\venv\Scripts\activate
+# On macOS/Linux:
+source venv/bin/activate
 ```
 
-2) Install dependencies
-
+### 2. Install Dependencies
+Install all backend dependencies:
 ```bash
 pip install -r requirements.txt
-
-# PyTorch is required by Whisper. If not auto-installed, install one of:
-# CPU-only example (Windows/Linux/macOS):
-pip install torch --index-url https://download.pytorch.org/whl/cpu
-# For CUDA builds, follow: https://pytorch.org/get-started
 ```
 
-3) Run the server
+> [!NOTE]
+> PyTorch and torchaudio are required by Whisper and Chatterbox TTS. If you plan to run neural models with GPU acceleration, install the appropriate CUDA PyTorch build according to instructions on [pytorch.org](https://pytorch.org/get-started/locally/).
 
+---
+
+## 🏃 Running the Application
+
+Start the FastAPI server:
 ```bash
 uvicorn main:app --reload
-# Open http://127.0.0.1:8000
 ```
 
-## 🖥️ Usage (UI)
+Access the application in your browser at:
+👉 **[http://127.0.0.1:8000](http://127.0.0.1:8000)**
 
-1. Open the app in your browser.
+---
 
-Upload a file:
-* Choose a file (WAV/MP3/etc.) and click "Transcribe".
+## 🔌 API Documentation
 
-Record in browser:
-* Click "Start Recording", then "Stop Recording".
-* Click "Transcribe" to upload the captured audio.
+### 1. Transcribe Audio
+- **Endpoint:** `POST /transcribe`
+- **Content-Type:** `multipart/form-data`
+- **Parameters:** 
+  - `file`: Audio file binary (Required)
+- **Response (200 OK):**
+  ```json
+  {
+    "transcription": "Extracted speech text here...",
+    "mel_spectrogram": "data:image/png;base64,..."
+  }
+  ```
 
-Wait for status "Done"; see transcript and mel spectrogram below.
+### 2. Clone Voice / Speech Synthesis
+- **Endpoint:** `POST /clone-voice`
+- **Content-Type:** `multipart/form-data`
+- **Parameters:**
+  - `text`: Text prompt to synthesize (Form field, Required)
+  - `ref_voice`: Audio file containing target voice (File field, Required)
+- **Response (200 OK):**
+  ```json
+  {
+    "audio": "data:audio/wav;base64,..."
+  }
+  ```
 
-Notes:
-* The UI includes an audio player for playback of recorded audio.
-* The backend decodes uploads (including WebM/Opus from the browser) using ffmpeg via `whisper.load_audio`.
-* You can switch to a larger Whisper model in `main.py` by changing `whisper.load_model("tiny")` to `"base"`, `"small"`, etc. Larger models are slower but more accurate.
+---
 
-## 🔌 API
+## 🛠️ Troubleshooting
 
-Endpoint: `POST /transcribe`
-
-Form-Data:
-* `file`: the audio file (key must be `file`).
-
-Response (200):
-
-```json
-{
-  "transcription": "...",
-  "mel_spectrogram": "data:image/png;base64,...."
-}
-```
-
-Response (error):
-
-```json
-{
-  "error": "An error occurred during transcription: ..."
-}
-```
-
-## ⚙️ Configuration
-
-Edit `main.py`:
-* Model size: `model = whisper.load_model("tiny")` → `"base" | "small" | "medium" | "large"`.
-* Device/precision: `fp16=False` forces CPU-friendly precision; enable fp16 on GPU.
-
-## 🧯 Troubleshooting
-
-* **Whisper model fails to load**: Ensure PyTorch installed correctly; try CPU wheel above or install via pytorch.org.
-* **ffmpeg not found**: Install ffmpeg and confirm `ffmpeg -version` works in your terminal.
-* **librosa/audioread errors**: Usually ffmpeg-related; also verify the audio file isn’t corrupted.
-* **Browser recording uploads but fails to transcribe**: Confirm ffmpeg is on PATH and try again; WebM/Opus requires ffmpeg.
-* **Slow inference**: Use `tiny`/`base` models or enable GPU (CUDA build of PyTorch + fp16).
-
-## 🗺️ Roadmap / Ideas
-
-* Language selection / translation.
-* Word-level timestamps and subtitle export (.srt).
-* Save spectrograms and transcripts to disk.
-* Model/device selection UI, timestamps toggle.
-
-## 🙏 Acknowledgements
-
-* OpenAI Whisper: https://github.com/openai/whisper
-* FastAPI: https://fastapi.tiangolo.com/
-* librosa: https://librosa.org/
+- **Whisper/Torch Errors:** Verify your PyTorch installation. If running on a system without a GPU, enforce CPU configurations or download PyTorch CPU wheels.
+- **ffmpeg Warnings:** Ensure `ffmpeg` is globally executable. Try typing `ffmpeg -version` in a terminal window.
+- **RealtimeTTS fails on Linux:** Install the PortAudio development headers before installing PyAudio/RealtimeTTS:
+  ```bash
+  sudo apt-get update && sudo apt-get install python3-dev portaudio19-dev
+  ```
 
 ---
 
