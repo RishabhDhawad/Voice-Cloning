@@ -10,4 +10,5 @@ python-multipart
 gunicorn
 torch
 torchaudio
-coqui-tts
+chatterbox-tts
+realtimetts[system]
